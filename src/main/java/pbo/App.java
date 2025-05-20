@@ -1,5 +1,10 @@
 package pbo;
 
+/*
+ * 12S23009_Dina Marlina Siagian
+ * 12S23028_Daniel Situmorang 
+ */
+
 import javax.persistence.*;
 import java.util.Scanner;
 import pbo.model.Executor;
