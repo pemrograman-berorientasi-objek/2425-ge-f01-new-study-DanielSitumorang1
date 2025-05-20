@@ -1,55 +1,39 @@
 package pbo;
-import pbo.model.Enrollment;
-import pbo.model.Executor;
+
 import javax.persistence.*;
 import java.util.Scanner;
-/**
- * 12S23009Dina Marlina Siagian
- * 12S23028_Daniel Situmorang
- *
- */
+import pbo.model.Executor;
+
 public class App {
+    private static final EntityManagerFactory emf = Persistence.createEntityManagerFactory("f01");
+    private static final EntityManager em = emf.createEntityManager();
+    private static final Executor executor = new Executor(em);
 
-    private static EntityManagerFactory entityManagerFactory;
-    private static EntityManager entityManager;
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        while (true) {
+            String input = scanner.nextLine().trim();
+            if (input.equals("---")) break;
 
-    public static void main(String[] _args) {
-        entityManagerFactory = Persistence.createEntityManagerFactory("coursy_pu");
-        entityManager = entityManagerFactory.createEntityManager();
-        
-        Executor executor = new Executor(entityManager);
-        executor.cleanUpTables();
-        Scanner sc = new Scanner(System.in);
-        while (sc.hasNext()){
-            String input = sc.nextLine();
-            if(input.equals("---")){
-                break;
-            }else{
-                String data[] = input.split("#");
-                switch (data[0]){
-                    case "course-add":
-                        executor.addCourse(data);
-                        break;
-                    case "student-add":
-                        executor.addStudent(data);
-                        break;
-                    case "course-show-all":
-                        executor.displayAllCourse();
-                        break;
-                    case "enroll":
-                        Enrollment enrollment = new Enrollment();
-                        break;
-                    case "student-show":
-                        executor.displayAllStudent();
-                        break;
-                    default:
-                        System.out.println("Invalid input");
-                }
+            if (input.startsWith("student-add#")) {
+                String[] tokens = input.split("#");
+                executor.addStudent(tokens[1], tokens[2], tokens[3]);
+            } else if (input.equals("student-show-all")) {
+                executor.showAllStudents();
+            } else if (input.startsWith("course-add#")) {
+                String[] tokens = input.split("#");
+                executor.addCourse(tokens[1], tokens[2], Integer.parseInt(tokens[3]), Integer.parseInt(tokens[4]));
+            } else if (input.equals("course-show-all")) {
+                executor.showAllCourses();
+            } else if (input.startsWith("enroll#")) {
+                String[] tokens = input.split("#");
+                executor.enrollStudent(tokens[1], tokens[2]);
+            } else if (input.startsWith("student-show#")) {
+                String nim = input.split("#")[1];
+                executor.showStudentDetail(nim);
             }
         }
-        sc.close();
-        entityManager.close();
-        entityManagerFactory.close();
+        em.close();
+        emf.close();
     }
-
 }
